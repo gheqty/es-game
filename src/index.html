@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schatten über Bruma</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #07070d; color: #e6e6f0;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    user-select: none;
+  }
+  h1 { font-size: 20px; letter-spacing: 3px; margin: 0 0 8px; color: #9affb0; }
+  #wrap { position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
+  canvas {
+    background: #0b0b14; border: 1px solid #2a2a44;
+    display: block; cursor: pointer;
+  }
+  #err { color: #ff6b81; margin-top: 14px; max-width: 460px;
+         white-space: pre-wrap; display: none; }
+</style>
+</head>
+<body>
+  <h1>SCHATTEN UEBER BRUMA</h1>
+  <div id="wrap">
+    <canvas id="canvas" width="768" height="576"></canvas>
+  </div>
+  <div id="err"></div>
+
+<script>
+(function () {
+  "use strict";
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  var errEl = document.getElementById("err");
+  var instance = null;
+
+  // Scale the backing store to the device pixel ratio for crisp rendering,
+  // especially text. The game logic still uses 768x576 logical coordinates.
+  var dpr = window.devicePixelRatio || 1;
+  var LW = canvas.width, LH = canvas.height;   // logical size (768x576)
+  canvas.width = LW * dpr;
+  canvas.height = LH * dpr;
+  canvas.style.width = LW + "px";
+  canvas.style.height = LH + "px";
+  ctx.scale(dpr, dpr);
+
+  // Tiny UTF-8 string decoder used to read string ptr+len from WASM memory.
+  var dec = new TextDecoder("utf-8");
+
+  var imports = {
+    env: {
+      js_clear: function () { ctx.clearRect(0, 0, LW, LH); },
+      js_fill_rect: function (x, y, w, h) { ctx.fillRect(x, y, w, h); },
+      js_fill_circle: function (x, y, r) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      },
+      js_fill_triangle: function (x1, y1, x2, y2, x3, y3) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3);
+        ctx.closePath(); ctx.fill();
+      },
+      js_set_color: function (r, g, b, a) {
+        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+      },
+      js_fill_text: function (ptr, len, x, y, size) {
+        var bytes = new Uint8Array(instance.exports.memory.buffer, ptr, len);
+        ctx.font = size + "px ui-monospace, Menlo, Consolas, monospace";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(dec.decode(bytes), x, y);
+      },
+      js_measure_text: function (ptr, len, size) {
+        var bytes = new Uint8Array(instance.exports.memory.buffer, ptr, len);
+        ctx.font = size + "px ui-monospace, Menlo, Consolas, monospace";
+        return ctx.measureText(dec.decode(bytes)).width;
+      },
+      js_request_frame: function () { requestAnimationFrame(loop); },
+      js_now_ms: function () { return performance.now(); }
+    }
+  };
+
+  function loop() { if (instance) instance.exports.update(); }
+
+  // key codes sent to WASM:
+  //   0 down 1 left 2 right 3 up   4 interact(E)   5 escape   6 enter
+  //   100..108 choice 1..9
+  function keyToCode(e) {
+    switch (e.key) {
+      case "ArrowDown": case "s": case "S": return 0;
+      case "ArrowLeft": case "a": case "A": return 1;
+      case "ArrowRight": case "d": case "D": return 2;
+      case "ArrowUp": case "w": case "W": return 3;
+      case "e": case "E": case " ": return 4;
+      case "l": case "L": return 7;
+      case "Escape": return 5;
+      case "Enter": return 6;
+    }
+    if (/^[1-9]$/.test(e.key)) return 100 + parseInt(e.key, 10) - 1;
+    return -1;
+  }
+
+  window.addEventListener("keydown", function (e) {
+    var c = keyToCode(e);
+    if (c >= 0) { e.preventDefault(); if (instance) instance.exports.keydown(c); }
+  });
+  window.addEventListener("keyup", function (e) {
+    var c = keyToCode(e);
+    if (c >= 0 && c <= 3) { e.preventDefault(); if (instance) instance.exports.keyup(c); }
+  });
+
+  // Mouse: hover over dialogue choices + click to select.
+  function canvasPos(e) {
+    var r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (LW / r.width),
+             y: (e.clientY - r.top) * (LH / r.height) };
+  }
+  canvas.addEventListener("mousemove", function (e) {
+    if (!instance) return;
+    var p = canvasPos(e);
+    instance.exports.mousemove(p.x, p.y);
+  });
+  canvas.addEventListener("click", function (e) {
+    if (!instance) return;
+    var p = canvasPos(e);
+    instance.exports.click(p.x, p.y);
+  });
+
+  function fail(msg) { errEl.textContent = msg; errEl.style.display = "block"; }
+
+  fetch("/game.wasm").then(function (r) {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.arrayBuffer();
+  }).then(function (bytes) {
+    return WebAssembly.instantiate(bytes, imports);
+  }).then(function (result) {
+    instance = result.instance;
+    if (instance.exports.init) instance.exports.init();
+  }).catch(function (err) { fail("Spiel konnte nicht geladen werden: " + err); });
+})();
+</script>
+</body>
+</html>
