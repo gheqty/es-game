@@ -161,7 +161,7 @@ pub static NODES: &[Node] = &[
         text_de: "Wir stellen die Miliz am Waldrand auf. Drei Männer mit Schwertern, mehr habe ich nicht. Gegen einen Dremora-Lord? Das ist kein Kampf, das ist eine Hinrichtung. Wir brauchen eine andere Waffe.",
         text_en: "We're stationing the militia at the forest edge. Three men with swords, that's all I have. Against a Dremora lord? That's not a fight, that's an execution. We need a different weapon.",
         choices: &[
-            c!("Vielleicht habe ich eine.", "Perhaps I have one.", 13, EFF_NONE, 0),
+            c!("Vielleicht habe ich eine.", "Perhaps I have one.", -1, EFF_SET_FLAG, crate::state::F_TALKED_RODERICK as i32),
             c!("Ich sehe mich um.", "I'll look around.", -1, EFF_SET_FLAG, crate::state::F_TALKED_RODERICK as i32),
         ],
     },
@@ -301,14 +301,14 @@ pub static NODES: &[Node] = &[
             c!("Setzt das Siegel ein.", "Use the seal.", 28, EFF_NONE, 0),
         ],
     },
-    // 25: Finale - with Lyra as ally
+    // 25: Finale - Lyra ambush (told her about relic, refused her help)
     Node {
         speaker: "Lyra",
         color: 0x9a6bd0,
-        text_de: "Ich stehe zu meinem Wort. Ich halte die Daedra auf, während Ihr das Siegel setzt. Tut es jetzt - ich bin eine Klinge Akavirischen Schwurs, und meine Klinge kennt ihre Sprache.",
-        text_en: "I stand by my word. I'll hold off the Daedra while you set the seal. Do it now - I am a blade of Akaviri oath, and my blade knows their language.",
+        text_de: "Lyra steht vor dem Tor und wartet auf Euch. 'Ihr habt mir vom Siegel erzählt und dachtet, ich würde es vergessen?' Sie zieht eine Klinge. 'Die Mythische Morgenröte dankt für Euer Vertrauen - auch das halbherzige.'",
+        text_en: "Lyra stands at the gate, waiting for you. 'You told me about the seal and thought I'd forget?' She draws a blade. 'The Mythic Dawn thanks you for your trust - even the half-hearted kind.'",
         choices: &[
-            c!("Setzt das Siegel ein.", "Use the seal.", 28, EFF_NONE, 0),
+            c!("Ihr habt mich getäuscht!", "You deceived me!", 29, EFF_NONE, 0),
         ],
     },
     // 26: Finale - betrayed by Lyra
@@ -510,6 +510,102 @@ pub static NODES: &[Node] = &[
         text_en: "The Mythic Dawn? Yes, I've... encountered their work. Daedric essences in the forest, carefully distilled. Someone with knowledge is helping them. Be wary of anyone who asks too many questions about the gate or the ruins - they report back, I'm sure of it.",
         choices: &[
             c!("[zurück]", "[back]", 42, EFF_NONE, 0),
+        ],
+    },
+    // 45: Roderick holding the line (repeat after F_RODERICK_LINE or F_ASSAULT)
+    Node {
+        speaker: "Wache Roderick",
+        color: 0xb83c34,
+        text_de: "Geht schon, Fremder. Ich halte die Stellung. Jede Sekunde, die Ihr hier verliert, ist ein Leben, das ich vergebe. Zum Tor. Jetzt.",
+        text_en: "Go, stranger. I'm holding the position. Every second you waste here is a life I'm spending. To the gate. Now.",
+        choices: &[
+            c!("[gehen]", "[go]", -1, EFF_NONE, 0),
+        ],
+    },
+    // 46: Roderick greeting (visited gate early)
+    Node {
+        speaker: "Wache Roderick",
+        color: 0xb83c34,
+        text_de: "Ich sah Euch am Tor. Ihr hättet fast Euer Leben dort gelassen. Was treibt Euch zur Südstraße? Sucht Ihr den Tod, oder habt Ihr einen Plan?",
+        text_en: "I saw you at the gate. You nearly lost your life there. What brings you to the south road? Are you seeking death, or do you have a plan?",
+        choices: &[
+            c!("Ich will das Tor schließen.", "I want to close the gate.", 10, EFF_NONE, 0),
+            c!("Was ist Euer Plan?", "What's your plan?", 11, EFF_NONE, 0),
+            c!("Verstanden.", "Understood.", -1, EFF_SET_FLAG, crate::state::F_TALKED_RODERICK as i32),
+        ],
+    },
+    // 47: Lyra first meeting (player has been warned about the cult)
+    Node {
+        speaker: "Lyra",
+        color: 0x9a6bd0,
+        text_de: "Still, Wanderer. Ich kenne diesen Blick - die Pilger, die das Tor schließen wollen. Ich bin Lyra. Und ich weiß mehr über Oblivion, als ein Sterblicher wissen sollte.",
+        text_en: "Quiet, wanderer. I know that look - the pilgrims who want to close the gate. I am Lyra. And I know more about Oblivion than a mortal should.",
+        choices: &[
+            c!("Wer seid Ihr wirklich?", "Who are you really?", 15, EFF_NONE, 0),
+            c!("Was wollt Ihr von mir?", "What do you want from me?", 16, EFF_NONE, 0),
+            c!("Man warnte mich vor Kultisten. Seid Ihr eine?", "I was warned about cultists. Are you one?", 48, EFF_NONE, 0),
+            c!("Lasst mich in Ruhe.", "Leave me alone.", 17, EFF_SET_FLAG, crate::state::F_REFUSED_LYRA as i32),
+        ],
+    },
+    // 48: Lyra deflects confrontation
+    Node {
+        speaker: "Lyra",
+        color: 0x9a6bd0,
+        text_de: "Kultisten? Glaubt Ihr wirklich, ein Kultist würde sich so offen zeigen? Ich bin eine Gelehrte, nichts mehr. Aber wenn Ihr mir nicht traut - geht allein zum Tor. Seht, wie weit Ihr kommt.",
+        text_en: "Cultists? Do you really think a cultist would reveal themselves so openly? I'm a scholar, nothing more. But if you don't trust me - go to the gate alone. See how far you get.",
+        choices: &[
+            c!("Dann helft mir.", "Then help me.", 16, EFF_NONE, 0),
+            c!("Ich gehe allein.", "I'll go alone.", 17, EFF_SET_FLAG, crate::state::F_REFUSED_LYRA as i32),
+        ],
+    },
+    // 49: Lyra repeat (refused her help)
+    Node {
+        speaker: "Lyra",
+        color: 0x9a6bd0,
+        text_de: "Immer noch hier? Ihr habt meine Hilfe abgelehnt. Vielleicht ist das klug. Oder vielleicht ist es das törichteste, was Ihr je getan habt. Das Tor wartet nicht.",
+        text_en: "Still here? You rejected my help. Perhaps that's wise. Or perhaps it's the most foolish thing you've ever done. The gate does not wait.",
+        choices: &[
+            c!("[gehen]", "[leave]", -1, EFF_NONE, 0),
+        ],
+    },
+    // 50: Konrad post-relic
+    Node {
+        speaker: "Bauer Konrad",
+        color: 0xd0a050,
+        text_de: "Ihr habt das Siegel? Bei meinem Großvater, das Licht in Eurer Hand... es ist echt. Geht zum Tor, Fremder. Mein Großvater hätte staunend geschwiegen.",
+        text_en: "You have the seal? By my grandfather, the light in your hand... it's real. Go to the gate, stranger. My grandfather would have been speechless.",
+        choices: &[
+            c!("[gehen]", "[go]", -1, EFF_SET_FLAG, crate::state::F_TALKED_KONRAD as i32),
+        ],
+    },
+    // 51: Mildred post-relic
+    Node {
+        speaker: "Schwester Mildred",
+        color: 0xe0d0a0,
+        text_de: "Akatosh sei dankbar. Das Siegel... es pulsiert mit Sternenlicht. Es ist echt. Geht nun zum Tor. Ich werde für Euch beten - und für alle, die im Hain ausharren.",
+        text_en: "Akatosh be praised. The seal... it pulses with starlight. It's real. Go to the gate now. I will pray for you - and for all who hold the line at the grove.",
+        choices: &[
+            c!("[gehen]", "[go]", -1, EFF_SET_FLAG, crate::state::F_TALKED_MILDRED as i32),
+        ],
+    },
+    // 52: Erik post-relic
+    Node {
+        speaker: "Jäger Erik",
+        color: 0x8aaa60,
+        text_de: "Ihr habt es wirklich? Das Siegel der Ayleiden? Dann geht zum Tor. Ich komme mit Euch - drei Pfeile und ein Bogen sind nicht viel, aber gegen Daedra ist es besser als nichts. Ich halte Euch den Rücken frei.",
+        text_en: "You really have it? The Ayleid seal? Then go to the gate. I'm coming with you - three arrows and a bow aren't much, but against Daedra it's better than nothing. I'll watch your back.",
+        choices: &[
+            c!("Mein Dank, Erik.", "My thanks, Erik.", -1, EFF_SET_FLAG, crate::state::F_TALKED_ERIK as i32),
+        ],
+    },
+    // 53: Sora post-relic
+    Node {
+        speaker: "Alchemistin Sora",
+        color: 0x60c0a0,
+        text_de: "Die Kristalle in meinem Labor... sie pulsierten, als Ihr die Ruinen verließt. Das Siegel ist echt. Ich kann es spüren. Geht zum Tor, bevor es zu spät ist. Und Fremder... vertraut niemandem dort. Niemandem.",
+        text_en: "The crystals in my lab... they pulsed when you left the ruins. The seal is real. I can feel it. Go to the gate, before it's too late. And stranger... trust no one there. No one.",
+        choices: &[
+            c!("[gehen]", "[go]", -1, EFF_SET_FLAG, crate::state::F_TALKED_SORA as i32),
         ],
     },
 ];
