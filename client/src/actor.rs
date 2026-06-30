@@ -3,8 +3,8 @@
 use crate::math::sqrt;
 use crate::state::{
     has, tile, Inter, INTERS, MAP_MODE, MAP_WORLD, TILE, FACING, HELD_DIR,
-    MOVING, PX, PY, WALK_PHASE, CAM_X, CAM_Y, F_KNOWS_RELIC, F_TALKED_LYRA,
-    WORLD_PX, WORLD_PY,
+    MOVING, PX, PY, WALK_PHASE, CAM_X, CAM_Y, F_ACCEPTED_LYRA, F_KNOWS_RELIC,
+    F_TALKED_LYRA, WORLD_PX, WORLD_PY,
 };
 use crate::story::{open_node, start_node_for};
 use crate::world::{is_solid, DOOR, init_map, init_tavern, init_chapel, init_house1, init_house2};
@@ -13,6 +13,29 @@ use crate::world::{is_solid, DOOR, init_map, init_tavern, init_chapel, init_hous
 /// to her before).
 pub fn lyra_present() -> bool {
     has(F_KNOWS_RELIC) || has(F_TALKED_LYRA)
+}
+
+/// Lyra's plaza position (tile 21, 19).
+const LYRA_PLAZA_X: f64 = 21.0 * 32.0 + (32.0 - 20.0) / 2.0;
+const LYRA_PLAZA_Y: f64 = 19.0 * 32.0 + (32.0 - 28.0);
+
+/// If the player accepted Lyra's help, she moves to the gate area.
+/// Called every frame; only repositions once.
+pub fn update_lyra_position() {
+    if unsafe { MAP_MODE } != MAP_WORLD {
+        return;
+    }
+    if !has(F_ACCEPTED_LYRA) {
+        return;
+    }
+    unsafe {
+        // Only move her if she's still at the plaza
+        if (INTERS[3].x - LYRA_PLAZA_X).abs() < 1.0 && (INTERS[3].y - LYRA_PLAZA_Y).abs() < 1.0 {
+            // Move to the path near the gate (tile 42, 20)
+            INTERS[3].x = 42.0 * 32.0 + (32.0 - 20.0) / 2.0;
+            INTERS[3].y = 20.0 * 32.0 + (32.0 - 28.0);
+        }
+    }
 }
 
 /// Is the world tile at (wx, wy) solid for the player's feet?

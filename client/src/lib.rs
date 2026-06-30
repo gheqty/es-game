@@ -56,6 +56,7 @@ pub extern "C" fn update() {
         actor::tick_movement();
         actor::check_door();
     }
+    actor::update_lyra_position();
     actor::clamp_camera();
 
     clear();
