@@ -104,7 +104,7 @@ pub fn draw_interactables() {
             let active = match kind {
                 6 => active_speaker == "Bauer Konrad",
                 7 => active_speaker == "Schwester Mildred",
-                8 => active_speaker == "Jaeger Erik",
+                8 => active_speaker == "Jäger Erik",
                 9 => active_speaker == "Alchemistin Sora",
                 _ => false,
             };
@@ -185,7 +185,7 @@ pub fn draw_hud() {
     set_color(0x0b0b14, 200);
     rect(0.0, 0.0, CANVAS_W as f64, 28.0);
     set_color(0x9affb0, 255);
-    text(l("Schatten ueber Bruma", "Shadow over Bruma"), 10.0, 19.0, 16.0);
+    text(l("Schatten über Bruma", "Shadow over Bruma"), 10.0, 19.0, 16.0);
 
     // language indicator
     let lang_label = if unsafe { LANG == LANG_DE } { "DE" } else { "EN" };
@@ -203,7 +203,7 @@ pub fn draw_hud() {
         rect(0.0, CANVAS_H as f64 - 22.0, CANVAS_W as f64, 22.0);
         set_color(0x8a8aa0, 255);
         text(
-            l("WASD/Pfeile: bewegen    E: sprechen    Tueren: hindurchgehen    L: Sprache",
+            l("WASD/Pfeile: bewegen    E: sprechen    Türen: hindurchgehen    L: Sprache",
               "WASD/Arrows: move    E: talk    Doors: walk through    L: language"),
             10.0,
             CANVAS_H as f64 - 8.0,

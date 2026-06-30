@@ -68,7 +68,7 @@ pub static NODES: &[Node] = &[
     Node {
         speaker: "Bruder Anselm",
         color: 0xc8c8d8,
-        text_de: "Akatobs Segen sei mit Euch, Wanderer. Ich spüre den Schatten auf Eurer Seele. Sucht Ihr Antworten auf das Tor, das im Osten brennt?",
+        text_de: "Akatoshs Segen sei mit Euch, Wanderer. Ich spüre den Schatten auf Eurer Seele. Sucht Ihr Antworten auf das Tor, das im Osten brennt?",
         text_en: "Akatosh's blessing be upon you, wanderer. I sense a shadow upon your soul. Do you seek answers about the gate that burns in the east?",
         choices: &[
             c!("Ja. Wie kann man es schließen?", "Yes. How can it be closed?", 4, EFF_NONE, 0),
@@ -448,43 +448,43 @@ pub static NODES: &[Node] = &[
             c!("[zurück]", "[back]", 35, EFF_NONE, 0),
         ],
     },
-    // 39: Jaeger Erik greeting (house 1 interior)
+    // 39: Jäger Erik greeting (house 1 interior)
     Node {
-        speaker: "Jaeger Erik",
+        speaker: "Jäger Erik",
         color: 0x8aaa60,
-        text_de: "Ah, ein Besucher. Gebt acht vor dem Chaos - ich hab gerade meinen Bogen gereinigt. Erik ist der Name. Ich jage die Waelder um Bruma, oder tat es, bevor das Tor oeffnete. Jetzt sind die Waelder voll von diesen... Dingen.",
+        text_de: "Ah, ein Besucher. Gebt acht vor dem Chaos - ich hab gerade meinen Bogen gereinigt. Erik ist der Name. Ich jage die Wälder um Bruma, oder tat es, bevor das Tor öffnete. Jetzt sind die Wälder voll von diesen... Dingen.",
         text_en: "Ah, a visitor. Mind the clutter - I was just cleaning my bow. Erik's the name. I hunt the forests around Bruma, or I did, before the gate opened. Now the woods are full of those... things.",
         choices: &[
-            c!("Was fuer Dinge?", "What things?", 40, EFF_NONE, 0),
+            c!("Was für Dinge?", "What things?", 40, EFF_NONE, 0),
             c!("Kennt Ihr die Ruinen?", "Do you know the ruins?", 41, EFF_NONE, 0),
             c!("Lebt wohl.", "Farewell.", -1, EFF_SET_FLAG, crate::state::F_TALKED_ERIK as i32),
         ],
     },
     // 40: Erik on creatures
     Node {
-        speaker: "Jaeger Erik",
+        speaker: "Jäger Erik",
         color: 0x8aaa60,
-        text_de: "Daedra. Ich hab sie nachts im Hain gesehen - spinnenartige Dinge und etwas Groesseres, mit einer Klinge aus Feuer. Meine Pfeile prallen von ihren Haeuten ab wie von Stein. Was immer Ihr vorhabt, Fremder - geht nicht allein.",
+        text_de: "Daedra. Ich hab sie nachts im Hain gesehen - spinnenartige Dinge und etwas Größeres, mit einer Klinge aus Feuer. Meine Pfeile prallen von ihren Häuten ab wie von Stein. Was immer Ihr vorhabt, Fremder - geht nicht allein.",
         text_en: "Daedra. I've seen them in the grove at night - spider-like things and something larger, with a blade of fire. My arrows bounce off their hides like off stone. Whatever you're planning, stranger - don't go alone.",
         choices: &[
-            c!("[zurueck]", "[back]", 39, EFF_NONE, 0),
+            c!("[zurück]", "[back]", 39, EFF_NONE, 0),
         ],
     },
     // 41: Erik on ruins
     Node {
-        speaker: "Jaeger Erik",
+        speaker: "Jäger Erik",
         color: 0x8aaa60,
-        text_de: "Die Ayleid-Ruinen westlich des Teichs? Ich hab dort jahrelang gejagt. Seltsame Lichter nachts, und eine Kaelte, die nicht natuerlich ist. Ich fand einmal Spuren - gestiefelte Fuesse, keine Daedra. Jemand besucht diese Ruinen. Kultisten, vielleicht.",
+        text_de: "Die Ayleid-Ruinen westlich des Teichs? Ich hab dort jahrelang gejagt. Seltsame Lichter nachts, und eine Kälte, die nicht natürlich ist. Ich fand einmal Spuren - gestiefelte Füße, keine Daedra. Jemand besucht diese Ruinen. Kultisten, vielleicht.",
         text_en: "The Ayleid ruins west of the pond? I've hunted near them for years. Strange lights there at night, and a cold that isn't natural. I found tracks once - booted feet, not Daedra. Someone visits those ruins. Cultists, maybe.",
         choices: &[
-            c!("[zurueck]", "[back]", 39, EFF_NONE, 0),
+            c!("[zurück]", "[back]", 39, EFF_NONE, 0),
         ],
     },
     // 42: Alchemistin Sora greeting (house 2 interior)
     Node {
         speaker: "Alchemistin Sora",
         color: 0x60c0a0,
-        text_de: "Oh! Ein Besucher. Bitte, fasst die Flaeschchen nicht an - einige von ihnen sind... launisch. Ich bin Sora. Ich studiere die Eigenschaften von Ayleid-Kristallen und Daedra-Essenzen. Ein gefaehrliches Hobby in diesen Tagen.",
+        text_de: "Oh! Ein Besucher. Bitte, fasst die Fläschchen nicht an - einige von ihnen sind... launisch. Ich bin Sora. Ich studiere die Eigenschaften von Ayleid-Kristallen und Daedra-Essenzen. Ein gefährliches Hobby in diesen Tagen.",
         text_en: "Oh! A visitor. Please, don't touch the flasks - some of them are... temperamental. I'm Sora. I study the properties of Ayleid crystals and Daedric essences. A dangerous hobby these days.",
         choices: &[
             c!("Was habt Ihr gelernt?", "What have you learned?", 43, EFF_NONE, 0),
@@ -496,20 +496,20 @@ pub static NODES: &[Node] = &[
     Node {
         speaker: "Alchemistin Sora",
         color: 0x60c0a0,
-        text_de: "Die Ayleiden banden Sternenlicht in Kristalle - das weiss ich. Ihre Siegel konnten Risse zwischen Welten schliessen. Wenn es ein Siegel gibt, das das Tor schliessen kann, dann in den westlichen Ruinen. Eine alte Macht, aber die einzige, die gegen Oblivion wirkt.",
+        text_de: "Die Ayleiden banden Sternenlicht in Kristalle - das weiß ich. Ihre Siegel konnten Risse zwischen Welten schließen. Wenn es ein Siegel gibt, das das Tor schließen kann, dann in den westlichen Ruinen. Eine alte Macht, aber die einzige, die gegen Oblivion wirkt.",
         text_en: "The Ayleids bound starlight into crystals - that much I know. Their seals could close rifts between worlds. If there's a seal that can shut that gate, it would be in the western ruins. An old power, but the only one that works against Oblivion.",
         choices: &[
-            c!("[zurueck]", "[back]", 42, EFF_NONE, 0),
+            c!("[zurück]", "[back]", 42, EFF_NONE, 0),
         ],
     },
     // 44: Sora on the cult
     Node {
         speaker: "Alchemistin Sora",
         color: 0x60c0a0,
-        text_de: "Die Mythische Morgenroete? Ja, ich bin... ihrer Arbeit begegnet. Daedra-Essenzen im Wald, sorgfaeltig destilliert. Jemand mit Wissen hilft ihnen. Seid vorsichtig bei jedem, der zu viele Fragen ueber das Tor oder die Ruinen stellt - sie berichten zurueck, da bin ich mir sicher.",
+        text_de: "Die Mythische Morgenröte? Ja, ich bin... ihrer Arbeit begegnet. Daedra-Essenzen im Wald, sorgfältig destilliert. Jemand mit Wissen hilft ihnen. Seid vorsichtig bei jedem, der zu viele Fragen über das Tor oder die Ruinen stellt - sie berichten zurück, da bin ich mir sicher.",
         text_en: "The Mythic Dawn? Yes, I've... encountered their work. Daedric essences in the forest, carefully distilled. Someone with knowledge is helping them. Be wary of anyone who asks too many questions about the gate or the ruins - they report back, I'm sure of it.",
         choices: &[
-            c!("[zurueck]", "[back]", 42, EFF_NONE, 0),
+            c!("[zurück]", "[back]", 42, EFF_NONE, 0),
         ],
     },
 ];
