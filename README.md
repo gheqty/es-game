@@ -18,7 +18,13 @@ cargo run --release
 ```
 
 **Controls:** WASD / arrow keys to move, `E` (or space) to talk / interact,
-`1`–`9` or mouse click for dialogue choices, `Esc` to close a dialogue.
+`1`–`9` or mouse click for dialogue choices, `Esc` to close a dialogue,
+`L` to switch language (English default, German available).
+
+## Play online
+
+The game is deployed on GitHub Pages — the WASM client runs entirely in
+the browser, no server needed. The Rust binary is only for local play.
 
 ## Story
 

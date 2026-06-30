@@ -140,7 +140,7 @@ pub static mut INTERS: [Inter; 6] = [
 ];
 
 // Wrapped line ranges for the current node text (indices into the &str).
-pub static mut WRAP_LINES: [(usize, usize); 8] = [(0, 0); 8];
+pub static mut WRAP_LINES: [(usize, usize); 12] = [(0, 0); 12];
 pub static mut WRAP_COUNT: usize = 0;
 
 /// Word-wrap `text` into up to 8 lines, storing byte ranges in `WRAP_LINES`.
@@ -165,7 +165,7 @@ pub fn wrap_text(text: &str, max_w: f64, size: f64) {
         }
         let candidate = measure(&text[line_start..we], size);
         if candidate > max_w {
-            if count < 8 {
+            if count < 12 {
                 unsafe { WRAP_LINES[count] = (line_start, line_end) };
                 count += 1;
             }
@@ -175,7 +175,7 @@ pub fn wrap_text(text: &str, max_w: f64, size: f64) {
             line_end = we;
         }
     }
-    if !first && count < 8 {
+    if !first && count < 12 {
         unsafe { WRAP_LINES[count] = (line_start, line_end) };
         count += 1;
     }

@@ -227,7 +227,27 @@ pub fn draw_dialog() {
         return;
     }
     let n = node(node_id);
-    let panel_h = 220.0;
+
+    // ---- Dynamic panel sizing ----
+    // Compute the space needed: speaker header + body lines + choices.
+    let line_h = 20.0;
+    let speaker_h = if n.speaker.is_empty() { 8.0 } else { 28.0 };
+    let choice_h = 26.0;
+    let choices_len = n.choices.len() as f64;
+    let wrap_count = unsafe { WRAP_COUNT } as f64;
+
+    // Body text area: cap at the maximum that fits without overlapping choices.
+    // Total panel = padding(14) + speaker + body + gap(8) + choices + padding(14)
+    // We want the panel to grow with content but never exceed 70% of canvas height.
+    let max_panel = (CANVAS_H as f64) * 0.72;
+    let needed = 14.0 + speaker_h + wrap_count * line_h + 8.0 + choices_len * choice_h + 14.0;
+    let panel_h = needed.min(max_panel);
+
+    // How many body lines actually fit?
+    let body_area_h = panel_h - 14.0 - speaker_h - 8.0 - choices_len * choice_h - 14.0;
+    let max_lines = ((body_area_h / line_h) as i32).max(1) as usize;
+    let lines_to_draw = (unsafe { WRAP_COUNT } as usize).min(max_lines);
+
     let py = CANVAS_H as f64 - panel_h - 10.0;
 
     set_color(0x000000, 90);
@@ -241,30 +261,35 @@ pub fn draw_dialog() {
     if !n.speaker.is_empty() {
         set_color(n.color, 255);
         text(n.speaker, 36.0, ty + 14.0, 18.0);
-        ty += 28.0;
-    } else {
-        ty += 8.0;
+        ty += speaker_h;
     }
 
     let body_text = l(n.text_de, n.text_en);
     set_color(0xe6e6f0, 255);
     let mut i = 0;
-    while i < unsafe { WRAP_COUNT } {
+    while i < lines_to_draw {
         let (s, e) = unsafe { WRAP_LINES[i] };
         let line = &body_text[s..e];
-        text(line, 36.0, ty + 16.0, 17.0);
-        ty += 22.0;
+        text(line, 36.0, ty + 16.0, 16.0);
+        ty += line_h;
         i += 1;
     }
 
+    // If we truncated lines, show an ellipsis
+    if lines_to_draw < unsafe { WRAP_COUNT } {
+        set_color(0x8a8aa0, 255);
+        text("...", 36.0, ty + 16.0, 16.0);
+    }
+
+    // Choices are anchored to the bottom of the panel
     let choices = n.choices;
-    let mut cy = py + panel_h - (choices.len() as f64) * 28.0 - 16.0;
+    let mut cy = py + panel_h - choices_len * choice_h - 14.0;
     let mouse = unsafe { (MOUSE_X, MOUSE_Y) };
     unsafe { HOVER = -1 };
     for (idx, ch) in choices.iter().enumerate() {
         let bx = 36.0;
         let bw = CANVAS_W as f64 - 72.0;
-        let bh = 24.0;
+        let bh = 22.0;
         let hovered = mouse.0 >= bx && mouse.0 <= bx + bw && mouse.1 >= cy && mouse.1 <= cy + bh;
         if hovered {
             unsafe { HOVER = idx as i32 };
@@ -274,10 +299,10 @@ pub fn draw_dialog() {
         set_color(0x2a2a3a, 255);
         rect(bx, cy, 3.0, bh);
         set_color(n.color, 255);
-        text(digit_str(idx as i32 + 1), bx + 10.0, cy + 17.0, 15.0);
+        text(digit_str(idx as i32 + 1), bx + 10.0, cy + 16.0, 14.0);
         set_color(if hovered { 0xffffff } else { 0xc8c8d8 }, 255);
-        text(l(ch.text_de, ch.text_en), bx + 30.0, cy + 17.0, 15.0);
-        cy += 28.0;
+        text(l(ch.text_de, ch.text_en), bx + 30.0, cy + 16.0, 14.0);
+        cy += choice_h;
     }
 }
 
